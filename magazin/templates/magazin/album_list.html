@@ -1,0 +1,109 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container mt-4">
+    <!-- Filtru form -->
+    <div class="card mb-4">
+        <div class="card-body">
+            <form method="get" class="row g-3">
+                <div class="col-md-3">
+                    <label class="form-label">Titlu</label>
+                    <input type="text" name="titlu" class="form-control" value="{{ request.GET.titlu }}">
+                </div>
+                <div class="col-md-3">
+                    <label class="form-label">Artist</label>
+                    <select name="artist" class="form-select">
+                        <option value="">Toți artiștii</option>
+                        {% for artist in artisti %}
+                            <option value="{{ artist.id }}" {% if request.GET.artist == artist.id|stringformat:"s" %}selected{% endif %}>
+                                {{ artist.nume }}
+                            </option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="col-md-3">
+                    <label class="form-label">Gen</label>
+                    <select name="gen" class="form-select">
+                        <option value="">Toate genurile</option>
+                        {% for gen in genuri %}
+                            <option value="{{ gen.id }}" {% if request.GET.gen == gen.id|stringformat:"s" %}selected{% endif %}>
+                                {{ gen.nume }}
+                            </option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="col-md-3">
+                    <label class="form-label">Preț minim</label>
+                    <input type="number" name="pret_min" class="form-control" value="{{ request.GET.pret_min }}">
+                </div>
+                <div class="col-md-3">
+                    <label class="form-label">Preț maxim</label>
+                    <input type="number" name="pret_max" class="form-control" value="{{ request.GET.pret_max }}">
+                </div>
+                <div class="col-md-3">
+                    <label class="form-label">Data lansării (de la)</label>
+                    <input type="date" name="data_min" class="form-control" value="{{ request.GET.data_min }}">
+                </div>
+                <div class="col-md-3">
+                    <label class="form-label">Data lansării (până la)</label>
+                    <input type="date" name="data_max" class="form-control" value="{{ request.GET.data_max }}">
+                </div>
+                <div class="col-12">
+                    <button type="submit" class="btn btn-primary">Filtrează</button>
+                    <a href="{% url 'album_list' %}" class="btn btn-secondary">Resetează</a>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Lista de albume -->
+    <div class="row">
+        {% for album in albume %}
+        <div class="col-md-4 mb-4">
+            <div class="card">
+                {% if album.imagine %}
+                    <img src="{{ album.imagine.url }}" class="card-img-top" alt="{{ album.titlu }}">
+                {% endif %}
+                <div class="card-body">
+                    <h5 class="card-title">{{ album.titlu }}</h5>
+                    <p class="card-text">
+                        <strong>Artist:</strong> {{ album.artist }}<br>
+                        <strong>Preț:</strong> {{ album.pret }} RON<br>
+                        <strong>Data lansării:</strong> {{ album.data_lansare }}
+                    </p>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+
+    <!-- Paginare -->
+    {% if is_paginated %}
+    <nav aria-label="Page navigation">
+        <ul class="pagination justify-content-center">
+            {% if page_obj.has_previous %}
+                <li class="page-item">
+                    <a class="page-link" href="?page=1{% for key,value in current_filters.items %}{% if key != 'page' %}&{{ key }}={{ value }}{% endif %}{% endfor %}">Prima</a>
+                </li>
+                <li class="page-item">
+                    <a class="page-link" href="?page={{ page_obj.previous_page_number }}{% for key,value in current_filters.items %}{% if key != 'page' %}&{{ key }}={{ value }}{% endif %}{% endfor %}">Anterior</a>
+                </li>
+            {% endif %}
+
+            <li class="page-item active">
+                <span class="page-link">Pagina {{ page_obj.number }} din {{ page_obj.paginator.num_pages }}</span>
+            </li>
+
+            {% if page_obj.has_next %}
+                <li class="page-item">
+                    <a class="page-link" href="?page={{ page_obj.next_page_number }}{% for key,value in current_filters.items %}{% if key != 'page' %}&{{ key }}={{ value }}{% endif %}{% endfor %}">Următoarea</a>
+                </li>
+                <li class="page-item">
+                    <a class="page-link" href="?page={{ page_obj.paginator.num_pages }}{% for key,value in current_filters.items %}{% if key != 'page' %}&{{ key }}={{ value }}{% endif %}{% endfor %}">Ultima</a>
+                </li>
+            {% endif %}
+        </ul>
+    </nav>
+    {% endif %}
+</div>
+{% endblock %}
