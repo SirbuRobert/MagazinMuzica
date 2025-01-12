@@ -1,16 +1,41 @@
-<!DOCTYPE html>
-<html>
-<head>
-    <title>Profil</title>
-</head>
-<body>
-    <h1>Profilul meu</h1>
-    <p>Nume utilizator: {{ request.user.username }}</p>
-    <p>Email: {{ request.user.email }}</p>
-    <p>Număr de telefon: {{ request.user.phone_number }}</p>
-    <p>Adresă: {{ request.user.address }}</p>
-    <p>Data nașterii: {{ request.user.birth_date }}</p>
-    <p>Biografie: {{ request.user.bio }}</p>
-    <a href="{% url 'password_change' %}">Schimbă parola</a>
-</body>
-</html>
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container">
+    <h2>Profilul meu</h2>
+    
+    <!-- Informații personale -->
+    <h3>Informații personale</h3>
+    <div class="user-info">
+        <p><strong>Username:</strong> {{ user.username }}</p>
+        <p><strong>Email:</strong> {{ user.email }}</p>
+        <p><strong>Telefon:</strong> {% if user.phone_number %}{{ user.phone_number }}{% else %}None{% endif %}</p>
+        <p><strong>Adresă:</strong> {% if user.address %}{{ user.address }}{% else %}None{% endif %}</p>
+        <p><strong>Data nașterii:</strong> {% if user.birth_date %}{{ user.birth_date }}{% else %}None{% endif %}</p>
+        
+        {% if user.profile_picture %}
+            <p><strong>Poză profil:</strong> <img src="{{ user.profile_picture.url }}" alt="Profile Picture" style="max-width: 200px;"></p>
+        {% endif %}
+        
+        {% if user.bio %}
+            <p><strong>Despre mine:</strong> {{ user.bio }}</p>
+        {% endif %}
+    </div>
+
+    <!-- Schimbă parola -->
+    <h3>Schimbă parola</h3>
+    <div class="password-change">
+        <a href="{% url 'password_change' %}" class="btn btn-primary">Schimbă parola</a>
+    </div>
+
+    {% if messages %}
+    <div class="messages">
+        {% for message in messages %}
+            <div class="alert {% if message.tags %}alert-{{ message.tags }}{% endif %}">
+                {{ message }}
+            </div>
+        {% endfor %}
+    </div>
+    {% endif %}
+</div>
+{% endblock %}

@@ -8,6 +8,7 @@ from .models import Album, Artist, Gen
 from datetime import date
 import datetime
 import re
+from django.core.validators import RegexValidator
 
 class ContactForm(forms.Form):
     TIP_MESAJ_CHOICES = [
@@ -132,6 +133,16 @@ class AlbumForm(forms.ModelForm):
         return album
     
 class CustomUserCreationForm(UserCreationForm):
+    username = forms.CharField(
+        max_length=150,
+        validators=[
+            RegexValidator(
+                regex='^[\w\s@.+-]*$',
+                message='Username-ul poate conține litere, numere, spații și caracterele @.+-',
+                code='invalid_username'
+            ),
+        ]
+    )
     class Meta:
         model = CustomUser
         fields = ['username', 'email', 'phone_number', 'address', 'birth_date', 'profile_picture', 'bio', 'password1', 'password2']

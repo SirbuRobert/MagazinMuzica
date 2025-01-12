@@ -14,6 +14,46 @@ from .forms import AlbumForm
 from django.contrib.auth import login, logout, authenticate
 from django.shortcuts import render, redirect
 from .forms import CustomUserCreationForm, CustomAuthenticationForm
+from django.contrib.auth.decorators import login_required
+from django.contrib.auth.forms import PasswordChangeForm
+from django.contrib.auth import update_session_auth_hash
+from django.contrib import messages
+
+@login_required
+def change_password(request):
+    if request.method == 'POST':
+        form = PasswordChangeForm(request.user, request.POST)
+        if form.is_valid():
+            user = form.save()
+            update_session_auth_hash(request, user)
+            messages.success(request, 'Parola a fost schimbată cu succes!')
+            return redirect('profile')
+        else:
+            messages.error(request, 'Vă rugăm să corectați erorile de mai jos.')
+    else:
+        form = PasswordChangeForm(request.user)
+    return render(request, 'magazin/password_change.html', {
+        'form': form
+    })
+
+@login_required
+def profile(request):
+    if request.method == 'POST':
+        password_form = PasswordChangeForm(request.user, request.POST)
+        if password_form.is_valid():
+            user = password_form.save()
+            # Actualizăm sesiunea pentru a nu deconecta utilizatorul
+            update_session_auth_hash(request, user)
+            messages.success(request, 'Parola a fost schimbată cu succes!')
+            return redirect('profile')
+    else:
+        password_form = PasswordChangeForm(request.user)
+    
+    context = {
+        'user': request.user,
+        'password_form': password_form
+    }
+    return render(request, 'magazin/profile.html', context)
 
 def register(request):
     if request.method == 'POST':
