@@ -11,6 +11,41 @@ import re
 from .forms import ContactForm
 from django.shortcuts import render, redirect
 from .forms import AlbumForm
+from django.contrib.auth import login, logout, authenticate
+from django.shortcuts import render, redirect
+from .forms import CustomUserCreationForm, CustomAuthenticationForm
+
+def register(request):
+    if request.method == 'POST':
+        form = CustomUserCreationForm(request.POST, request.FILES)
+        if form.is_valid():
+            form.save()
+            return redirect('login')
+    else:
+        form = CustomUserCreationForm()
+    return render(request, 'magazin/register.html', {'form': form})
+
+def custom_login(request):
+    if request.method == 'POST':
+        form = CustomAuthenticationForm(request, data=request.POST)
+        if form.is_valid():
+            user = form.get_user()
+            login(request, user)
+            if form.cleaned_data.get('remember_me'):
+                request.session.set_expiry(86400)  # 1 day
+            else:
+                request.session.set_expiry(0)
+            return redirect('profile')
+    else:
+        form = CustomAuthenticationForm()
+    return render(request, 'magazin/login.html', {'form': form})
+
+def custom_logout(request):
+    logout(request)
+    return redirect('login')
+
+def profile(request):
+    return render(request, 'magazin/profile.html')
 
 class ContactView(FormView):
     template_name = 'magazin/contact.html'

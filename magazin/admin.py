@@ -1,5 +1,7 @@
 from django.contrib import admin
 from .models import Album, Artist, Gen, Melodie, Instrument, Accesoriu, Stoc
+from django.contrib.auth.admin import UserAdmin
+from .models import CustomUser
 
 @admin.register(Album)
 class AlbumAdmin(admin.ModelAdmin):
@@ -65,6 +67,16 @@ class StocAdmin(admin.ModelAdmin):
     search_fields = ['produs_id', 'locatie_depozit']
     list_filter = ('tip_produs', 'locatie_depozit')
     list_display = ('tip_produs', 'cantitate', 'locatie_depozit', 'ultima_actualizare')
+
+class CustomUserAdmin(UserAdmin):
+    fieldsets = UserAdmin.fieldsets + (
+        (None, {'fields': ('phone_number', 'address', 'birth_date', 'profile_picture', 'bio')}),
+    )
+    add_fieldsets = UserAdmin.add_fieldsets + (
+        (None, {'fields': ('phone_number', 'address', 'birth_date', 'profile_picture', 'bio')}),
+    )
+
+admin.site.register(CustomUser, CustomUserAdmin)
 
 # Personalizare pagină admin
 admin.site.site_header = "Administrare Magazin de Muzică"

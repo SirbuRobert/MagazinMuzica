@@ -1,8 +1,12 @@
 # FILE: magazin/forms.py
 from django import forms
+from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
 from django.core.exceptions import ValidationError
+from django.contrib.auth.forms import UserCreationForm
+from .models import CustomUser
 from .models import Album, Artist, Gen
 from datetime import date
+import datetime
 import re
 
 class ContactForm(forms.Form):
@@ -126,3 +130,29 @@ class AlbumForm(forms.ModelForm):
         if commit:
             album.save()
         return album
+    
+class CustomUserCreationForm(UserCreationForm):
+    class Meta:
+        model = CustomUser
+        fields = ['username', 'email', 'phone_number', 'address', 'birth_date', 'profile_picture', 'bio', 'password1', 'password2']
+
+    def clean_phone_number(self):
+        phone_number = self.cleaned_data.get('phone_number')
+        if not phone_number.isdigit():
+            raise forms.ValidationError('Numărul de telefon trebuie să conțină doar cifre.')
+        return phone_number
+
+    def clean_birth_date(self):
+        birth_date = self.cleaned_data.get('birth_date')
+        if birth_date and birth_date > datetime.date.today():
+            raise forms.ValidationError('Data nașterii nu poate fi în viitor.')
+        return birth_date
+
+    def clean_address(self):
+        address = self.cleaned_data.get('address')
+        if len(address) < 10:
+            raise forms.ValidationError('Adresa trebuie să conțină cel puțin 10 caractere.')
+        return address
+    
+class CustomAuthenticationForm(AuthenticationForm):
+    remember_me = forms.BooleanField(required=False, label='Ține-mă minte')
