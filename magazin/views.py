@@ -9,6 +9,8 @@ import json
 import os
 import re
 from .forms import ContactForm
+from django.shortcuts import render, redirect
+from .forms import AlbumForm
 
 class ContactView(FormView):
     template_name = 'magazin/contact.html'
@@ -50,39 +52,30 @@ class AlbumListView(ListView):
     paginate_by = 10  # Numărul de produse pe pagină
     
     def get_queryset(self):
-        queryset = Album.objects.all()
-        
-        # Filtrare după titlu
+        queryset = super().get_queryset()
         titlu = self.request.GET.get('titlu')
-        if titlu:
-            queryset = queryset.filter(titlu__icontains=titlu)
-            
-        # Filtrare după artist
         artist = self.request.GET.get('artist')
-        if artist:
-            queryset = queryset.filter(artist__nume__icontains=artist)
-            
-        # Filtrare după preț
+        gen = self.request.GET.get('gen')
         pret_min = self.request.GET.get('pret_min')
         pret_max = self.request.GET.get('pret_max')
+        data_min = self.request.GET.get('data_min')
+        data_max = self.request.GET.get('data_max')
+
+        if titlu:
+            queryset = queryset.filter(titlu__icontains=titlu)
+        if artist:
+            queryset = queryset.filter(artist_id=artist)
+        if gen:
+            queryset = queryset.filter(gen__id=gen)
         if pret_min:
             queryset = queryset.filter(pret__gte=pret_min)
         if pret_max:
             queryset = queryset.filter(pret__lte=pret_max)
-            
-        # Filtrare după gen
-        gen = self.request.GET.get('gen')
-        if gen:
-            queryset = queryset.filter(gen__nume__icontains=gen)
-            
-        # Filtrare după data lansării
-        data_min = self.request.GET.get('data_min')
-        data_max = self.request.GET.get('data_max')
         if data_min:
             queryset = queryset.filter(data_lansare__gte=data_min)
         if data_max:
             queryset = queryset.filter(data_lansare__lte=data_max)
-            
+
         return queryset
 
     def get_context_data(self, **kwargs):
@@ -91,3 +84,13 @@ class AlbumListView(ListView):
         context['artisti'] = Artist.objects.all()
         context['current_filters'] = self.request.GET
         return context
+
+def add_album(request):
+    if request.method == 'POST':
+        form = AlbumForm(request.POST, request.FILES)
+        if form.is_valid():
+            form.save()
+            return redirect('album_list')  # Redirecționează către lista de albume sau altă pagină
+    else:
+        form = AlbumForm()
+    return render(request, 'magazin/add_album.html', {'form': form})

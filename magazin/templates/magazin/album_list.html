@@ -41,20 +41,19 @@
                     <input type="number" name="pret_max" class="form-control" value="{{ request.GET.pret_max }}">
                 </div>
                 <div class="col-md-3">
-                    <label class="form-label">Data lansării (de la)</label>
+                    <label class="form-label">Data lansării minimă</label>
                     <input type="date" name="data_min" class="form-control" value="{{ request.GET.data_min }}">
                 </div>
                 <div class="col-md-3">
-                    <label class="form-label">Data lansării (până la)</label>
+                    <label class="form-label">Data lansării maximă</label>
                     <input type="date" name="data_max" class="form-control" value="{{ request.GET.data_max }}">
                 </div>
-                <div class="col-12">
-                    <button type="submit" class="btn btn-primary">Filtrează</button>
-                    <a href="{% url 'album_list' %}" class="btn btn-secondary">Resetează</a>
+                <div class="col-md-3">
+                    <button type="submit" class="btn btn-primary mt-4">Filtrează</button>
+                    <a href="{% url 'album_list' %}" class="btn btn-secondary mt-4">Resetează</a>
                 </div>
             </form>
         </div>
-    </div>
 
     <!-- Lista de albume -->
     <div class="row">

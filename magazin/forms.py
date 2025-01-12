@@ -1,6 +1,7 @@
 # FILE: magazin/forms.py
 from django import forms
 from django.core.exceptions import ValidationError
+from .models import Album, Artist, Gen
 from datetime import date
 import re
 
@@ -67,3 +68,61 @@ class ContactForm(forms.Form):
         validate_text(subiect, "Subiect")
 
         return cleaned_data
+
+class AlbumForm(forms.ModelForm):
+
+    class Meta:
+        model = Album
+        fields = ['titlu', 'pret', 'artist', 'gen', 'imagine', 'data_lansare']
+        labels = {
+            'titlu': 'Titlu Album',
+            'pret': 'Preț',
+            'artist': 'Artist',
+            'gen': 'Gen',
+            'imagine': 'Imagine Album',
+            'data_lansare': 'Data Lansării'
+        }
+        help_texts = {
+            'titlu': 'Introduceți titlul albumului',
+        }
+        error_messages = {
+            'titlu': {
+                'required': 'Titlul este obligatoriu',
+            },
+            'pret': {
+                'required': 'Prețul este obligatoriu',
+                'invalid': 'Introduceți un preț valid',
+            },
+            'imagine': {
+                'required': 'Imaginea este obligatorie',
+            },
+            'data_lansare': {
+                'required': 'Data lansării este obligatorie',
+            },
+        }
+
+    def clean_pret(self):
+        pret = self.cleaned_data.get('pret')
+        if pret <= 0:
+            raise forms.ValidationError('Prețul trebuie să fie mai mare de 0')
+        return pret
+
+    def clean(self):
+        cleaned_data = super().clean()
+        additional_field_1 = cleaned_data.get('additional_field_1')
+        additional_field_2 = cleaned_data.get('additional_field_2')
+
+        # Exemplu de validare care implică două câmpuri
+        if additional_field_1 and additional_field_2:
+            if additional_field_1 == additional_field_2:
+                raise forms.ValidationError('Câmpurile adiționale nu pot fi identice')
+
+        return cleaned_data
+
+    def save(self, commit=True):
+        album = super().save(commit=False)
+        # Procesare date din câmpurile adiționale
+        album.some_field = self.cleaned_data['additional_field_1'] + self.cleaned_data['additional_field_2']
+        if commit:
+            album.save()
+        return album
