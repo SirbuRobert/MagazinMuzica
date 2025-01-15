@@ -1,6 +1,6 @@
 from django.views.generic import ListView
-from django.db.models import Q
-from .models import Album, Artist, Gen
+from django.db.models import Q, Subquery, OuterRef
+from .models import Album, Artist, Gen, Instrument, Stoc
 from django.views.generic import FormView
 from django.urls import reverse_lazy
 from django.utils import timezone
@@ -120,11 +120,55 @@ class ContactView(FormView):
 
         return super().form_valid(form)
 
+class InstrumentListView(ListView):
+    model = Instrument 
+    template_name = 'magazin/instrument_list.html'
+    context_object_name = 'instrumente'
+    paginate_by = 10
+
+    def get_queryset(self):
+        queryset = super().get_queryset()
+        nume = self.request.GET.get('nume')
+        marca = self.request.GET.get('marca')
+        pret_min = self.request.GET.get('pret_min')
+        pret_max = self.request.GET.get('pret_max')
+        stare = self.request.GET.get('stare')
+
+        if nume:
+            queryset = queryset.filter(nume__icontains=nume)
+        if marca:
+            queryset = queryset.filter(marca__icontains=marca)
+        if pret_min:
+            queryset = queryset.filter(pret__gte=pret_min)
+        if pret_max:
+            queryset = queryset.filter(pret__lte=pret_max)
+        if stare:
+            queryset = queryset.filter(stare=stare)
+
+        # Adăugăm informații despre stoc
+        queryset = queryset.annotate(
+            stoc_cantitate=Subquery(
+                Stoc.objects.filter(
+                    tip_produs='instrument',
+                    produs_id=OuterRef('id')
+                ).values('cantitate')[:1]
+            )
+        )
+
+        return queryset
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['marci'] = Instrument.objects.values_list('marca', flat=True).distinct()
+        context['stari'] = Instrument.objects.values_list('stare', flat=True).distinct()
+        context['current_filters'] = self.request.GET
+        return context
+
 class AlbumListView(ListView):
     model = Album
     template_name = 'magazin/album_list.html'
     context_object_name = 'albume'
-    paginate_by = 10  # Numărul de produse pe pagină
+    paginate_by = 10
     
     def get_queryset(self):
         queryset = super().get_queryset()
@@ -150,6 +194,16 @@ class AlbumListView(ListView):
             queryset = queryset.filter(data_lansare__gte=data_min)
         if data_max:
             queryset = queryset.filter(data_lansare__lte=data_max)
+
+        # Adăugăm informații despre stoc pentru albume
+        queryset = queryset.annotate(
+            stoc_cantitate=Subquery(
+                Stoc.objects.filter(
+                    tip_produs='album',
+                    produs_id=OuterRef('id')
+                ).values('cantitate')[:1]
+            )
+        )
 
         return queryset
 

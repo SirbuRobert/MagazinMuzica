@@ -5,32 +5,32 @@
     <!-- Filtru form -->
     <div class="card mb-4">
         <div class="card-header bg-primary text-white">
-            <h4 class="mb-0">Filtrare Albume</h4>
+            <h4 class="mb-0">Filtrare Instrumente</h4>
         </div>
         <div class="card-body">
             <form method="get" class="row g-3">
                 <div class="col-md-3">
-                    <label class="form-label">Titlu</label>
-                    <input type="text" name="titlu" class="form-control" value="{{ request.GET.titlu }}">
+                    <label class="form-label">Nume</label>
+                    <input type="text" name="nume" class="form-control" value="{{ request.GET.nume }}">
                 </div>
                 <div class="col-md-3">
-                    <label class="form-label">Artist</label>
-                    <select name="artist" class="form-select">
-                        <option value="">Toți artiștii</option>
-                        {% for artist in artisti %}
-                            <option value="{{ artist.id }}" {% if request.GET.artist == artist.id|stringformat:"s" %}selected{% endif %}>
-                                {{ artist.nume }}
+                    <label class="form-label">Marcă</label>
+                    <select name="marca" class="form-select">
+                        <option value="">Toate mărcile</option>
+                        {% for marca in marci %}
+                            <option value="{{ marca }}" {% if request.GET.marca == marca %}selected{% endif %}>
+                                {{ marca }}
                             </option>
                         {% endfor %}
                     </select>
                 </div>
                 <div class="col-md-3">
-                    <label class="form-label">Gen</label>
-                    <select name="gen" class="form-select">
-                        <option value="">Toate genurile</option>
-                        {% for gen in genuri %}
-                            <option value="{{ gen.id }}" {% if request.GET.gen == gen.id|stringformat:"s" %}selected{% endif %}>
-                                {{ gen.nume }}
+                    <label class="form-label">Stare</label>
+                    <select name="stare" class="form-select">
+                        <option value="">Toate stările</option>
+                        {% for stare in stari %}
+                            <option value="{{ stare }}" {% if request.GET.stare == stare %}selected{% endif %}>
+                                {{ stare }}
                             </option>
                         {% endfor %}
                     </select>
@@ -43,42 +43,31 @@
                     <label class="form-label">Preț maxim</label>
                     <input type="number" name="pret_max" class="form-control" value="{{ request.GET.pret_max }}">
                 </div>
-                <div class="col-md-3">
-                    <label class="form-label">Data lansării minimă</label>
-                    <input type="date" name="data_min" class="form-control" value="{{ request.GET.data_min }}">
-                </div>
-                <div class="col-md-3">
-                    <label class="form-label">Data lansării maximă</label>
-                    <input type="date" name="data_max" class="form-control" value="{{ request.GET.data_max }}">
-                </div>
                 <div class="col-md-3 d-flex align-items-end">
                     <div>
                         <button type="submit" class="btn btn-primary me-2">Filtrează</button>
-                        <a href="{% url 'album_list' %}" class="btn btn-secondary">Resetează</a>
+                        <a href="{% url 'instrument_list' %}" class="btn btn-secondary">Resetează</a>
                     </div>
                 </div>
             </form>
         </div>
     </div>
 
-    <!-- Lista de albume -->
+    <!-- Lista de instrumente -->
     <div class="row">
-        {% for album in albume %}
+        {% for instrument in instrumente %}
         <div class="col-md-4 mb-4">
             <div class="card h-100">
-                {% if album.imagine %}
-                    <img src="{{ album.imagine.url }}" class="card-img-top" alt="{{ album.titlu }}">
-                {% endif %}
                 <div class="card-body">
-                    <h5 class="card-title">{{ album.titlu }}</h5>
+                    <h5 class="card-title">{{ instrument.nume }}</h5>
                     <p class="card-text">
-                        <strong>Artist:</strong> {{ album.artist }}<br>
-                        <strong>Preț:</strong> {{ album.pret }} RON<br>
-                        <strong>Data lansării:</strong> {{ album.data_lansare }}<br>
+                        <strong>Marcă:</strong> {{ instrument.marca }}<br>
+                        <strong>Preț:</strong> {{ instrument.pret }} RON<br>
+                        <strong>Stare:</strong> {{ instrument.stare }}<br>
                         <strong>Stoc disponibil:</strong> 
-                        {% if album.stoc_cantitate is not None %}
-                            {% if album.stoc_cantitate > 0 %}
-                                <span class="text-success">{{ album.stoc_cantitate }} bucăți</span>
+                        {% if instrument.stoc_cantitate is not None %}
+                            {% if instrument.stoc_cantitate > 0 %}
+                                <span class="text-success">{{ instrument.stoc_cantitate }} bucăți</span>
                             {% else %}
                                 <span class="text-danger">Stoc epuizat</span>
                             {% endif %}
@@ -86,9 +75,10 @@
                             <span class="text-warning">Indisponibil</span>
                         {% endif %}
                     </p>
+                    <p class="card-text"><small class="text-muted">{{ instrument.descriere|truncatewords:30 }}</small></p>
                 </div>
                 <div class="card-footer">
-                    {% if album.stoc_cantitate > 0 %}
+                    {% if instrument.stoc_cantitate > 0 %}
                         <button class="btn btn-success w-100">Adaugă în coș</button>
                     {% else %}
                         <button class="btn btn-secondary w-100" disabled>Indisponibil</button>

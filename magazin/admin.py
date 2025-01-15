@@ -15,7 +15,7 @@ class AlbumAdmin(admin.ModelAdmin):
     )
     search_fields = ['titlu', 'artist__nume']
     list_filter = ('data_lansare', 'artist', 'gen')
-    list_display = ('titlu', 'artist', 'data_lansare', 'pret')
+    list_display = ('id', 'titlu', 'artist', 'data_lansare', 'pret')
 
 @admin.register(Artist)
 class ArtistAdmin(admin.ModelAdmin):

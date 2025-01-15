@@ -94,13 +94,20 @@ class Stoc(models.Model):
     
     produs_id = models.IntegerField()
     tip_produs = models.CharField(max_length=50, choices=TIPURI_PRODUSE)
-    cantitate = models.IntegerField()
+    cantitate = models.IntegerField(default=0)
     locatie_depozit = models.CharField(max_length=200)
     ultima_actualizare = models.DateTimeField(auto_now=True)
 
-    def __str__(self):
-        return f"{self.tip_produs} - {self.produs_id} ({self.cantitate})"
+    def get_produs(self):
+        if self.tip_produs == 'album':
+            return Album.objects.get(id=self.produs_id)
+        elif self.tip_produs == 'instrument':
+            return Instrument.objects.get(id=self.produs_id)
+        elif self.tip_produs == 'accesoriu':
+            return Accesoriu.objects.get(id=self.produs_id)
+        return None
 
-    class Meta:
-        verbose_name_plural = "Stocuri"
+    def __str__(self):
+        produs = self.get_produs()
+        return f"{produs} - Stoc: {self.cantitate}"
 

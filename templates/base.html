@@ -21,6 +21,9 @@
                         <a class="nav-link" href="{% url 'album_list' %}">Albume</a>
                     </li>
                     <li class="nav-item">
+                        <a class="nav-link" href="{% url 'instrument_list' %}">Instrumente</a>
+                    </li>
+                    <li class="nav-item">
                         <a class="nav-link" href="{% url 'contact' %}">Contact</a>
                     </li>
                     {% if user.is_authenticated %}
@@ -32,19 +35,33 @@
                 <ul class="navbar-nav">
                     {% if user.is_authenticated %}
                         <li class="nav-item">
-                            <a class="nav-link" href="{% url 'profile' %}">Profil</a>
+                            <a class="nav-link" href="{% url 'profile' %}">
+                                <i class="bi bi-person-fill"></i> Profil
+                            </a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" href="{% url 'logout' %}">Deconectare</a>
+                            <a class="nav-link" href="{% url 'logout' %}">
+                                <i class="bi bi-box-arrow-right"></i> Deconectare
+                            </a>
                         </li>
                     {% else %}
                         <li class="nav-item">
-                            <a class="nav-link" href="{% url 'login' %}">Autentificare</a>
+                            <a class="nav-link" href="{% url 'login' %}">
+                                <i class="bi bi-box-arrow-in-right"></i> Autentificare
+                            </a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" href="{% url 'register' %}">Înregistrare</a>
+                            <a class="nav-link" href="{% url 'register' %}">
+                                <i class="bi bi-person-plus"></i> Înregistrare
+                            </a>
                         </li>
                     {% endif %}
+                    <li class="nav-item">
+                        <a class="nav-link" href="#" id="cart-icon">
+                            <i class="bi bi-cart3"></i>
+                            <span class="badge bg-danger">0</span>
+                        </a>
+                    </li>
                 </ul>
             </div>
         </div>
@@ -53,8 +70,9 @@
     <div class="container mt-4">
         {% if messages %}
             {% for message in messages %}
-                <div class="alert alert-{{ message.tags }}">
+                <div class="alert alert-{{ message.tags }} alert-dismissible fade show">
                     {{ message }}
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
                 </div>
             {% endfor %}
         {% endif %}

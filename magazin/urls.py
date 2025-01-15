@@ -1,9 +1,19 @@
 from django.urls import path
-from .views import AlbumListView, ContactView, add_album, register, custom_login, custom_logout, profile
+from .views import (
+    AlbumListView, 
+    InstrumentListView,
+    ContactView, 
+    add_album, 
+    register, 
+    custom_login, 
+    custom_logout, 
+    profile
+)
 from django.contrib.auth import views as auth_views
 
 urlpatterns = [
     path('albume/', AlbumListView.as_view(), name='album_list'),
+    path('instrumente/', InstrumentListView.as_view(), name='instrument_list'),
     path('contact/', ContactView.as_view(), name='contact'),
     path('add-album/', add_album, name='add_album'),
     path('register/', register, name='register'),
