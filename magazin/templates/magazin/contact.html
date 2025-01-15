@@ -1,12 +1,168 @@
 {% extends 'base.html' %}
+{% load form_tags %}
 
 {% block content %}
-<div class="container mt-4">
-    <h2>Contact</h2>
-    <form method="post">
-        {% csrf_token %}
-        {{ form.as_p }}
-        <button type="submit" class="btn btn-primary">Trimite</button>
-    </form>
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card shadow">
+                <div class="card-header bg-primary text-white">
+                    <h2 class="text-center mb-0">Contactează-ne</h2>
+                </div>
+                <div class="card-body">
+                    {% if messages %}
+                        {% for message in messages %}
+                            <div class="alert alert-{{ message.tags }}">
+                                {{ message }}
+                            </div>
+                        {% endfor %}
+                    {% endif %}
+
+                    <form method="post" class="needs-validation" novalidate>
+                        {% csrf_token %}
+                        
+                        <div class="row">
+                            <!-- Nume și Prenume -->
+                            <div class="col-md-6 mb-3">
+                                <label for="{{ form.nume.id_for_label }}" class="form-label">{{ form.nume.label }}*</label>
+                                {{ form.nume|addclass:"form-control" }}
+                                {% if form.nume.errors %}
+                                    <div class="invalid-feedback d-block">
+                                        {{ form.nume.errors }}
+                                    </div>
+                                {% endif %}
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label for="{{ form.prenume.id_for_label }}" class="form-label">{{ form.prenume.label }}</label>
+                                {{ form.prenume|addclass:"form-control" }}
+                                {% if form.prenume.errors %}
+                                    <div class="invalid-feedback d-block">
+                                        {{ form.prenume.errors }}
+                                    </div>
+                                {% endif %}
+                            </div>
+
+                            <!-- Data nașterii -->
+                            <div class="col-md-6 mb-3">
+                                <label for="{{ form.data_nasterii.id_for_label }}" class="form-label">{{ form.data_nasterii.label }}</label>
+                                {{ form.data_nasterii|addclass:"form-control" }}
+                                {% if form.data_nasterii.errors %}
+                                    <div class="invalid-feedback d-block">
+                                        {{ form.data_nasterii.errors }}
+                                    </div>
+                                {% endif %}
+                            </div>
+
+                            <!-- Minim zile așteptare -->
+                            <div class="col-md-6 mb-3">
+                                <label for="{{ form.minim_zile_asteptare.id_for_label }}" class="form-label">{{ form.minim_zile_asteptare.label }}*</label>
+                                {{ form.minim_zile_asteptare|addclass:"form-control" }}
+                                {% if form.minim_zile_asteptare.errors %}
+                                    <div class="invalid-feedback d-block">
+                                        {{ form.minim_zile_asteptare.errors }}
+                                    </div>
+                                {% endif %}
+                            </div>
+
+                            <!-- Email și Confirmare Email -->
+                            <div class="col-md-6 mb-3">
+                                <label for="{{ form.email.id_for_label }}" class="form-label">{{ form.email.label }}*</label>
+                                {{ form.email|addclass:"form-control" }}
+                                {% if form.email.errors %}
+                                    <div class="invalid-feedback d-block">
+                                        {{ form.email.errors }}
+                                    </div>
+                                {% endif %}
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label for="{{ form.confirmare_email.id_for_label }}" class="form-label">{{ form.confirmare_email.label }}*</label>
+                                {{ form.confirmare_email|addclass:"form-control" }}
+                                {% if form.confirmare_email.errors %}
+                                    <div class="invalid-feedback d-block">
+                                        {{ form.confirmare_email.errors }}
+                                    </div>
+                                {% endif %}
+                            </div>
+
+                            <!-- Tip mesaj -->
+                            <div class="col-md-12 mb-3">
+                                <label for="{{ form.tip_mesaj.id_for_label }}" class="form-label">{{ form.tip_mesaj.label }}*</label>
+                                {{ form.tip_mesaj|addclass:"form-select" }}
+                                {% if form.tip_mesaj.errors %}
+                                    <div class="invalid-feedback d-block">
+                                        {{ form.tip_mesaj.errors }}
+                                    </div>
+                                {% endif %}
+                            </div>
+
+                            <!-- Subiect -->
+                            <div class="col-md-12 mb-3">
+                                <label for="{{ form.subiect.id_for_label }}" class="form-label">{{ form.subiect.label }}*</label>
+                                {{ form.subiect|addclass:"form-control" }}
+                                {% if form.subiect.errors %}
+                                    <div class="invalid-feedback d-block">
+                                        {{ form.subiect.errors }}
+                                    </div>
+                                {% endif %}
+                            </div>
+
+                            <!-- Mesaj -->
+                            <div class="col-12 mb-3">
+                                <label for="{{ form.mesaj.id_for_label }}" class="form-label">{{ form.mesaj.label }}*</label>
+                                {{ form.mesaj|addclass:"form-control" }}
+                                {% if form.mesaj.errors %}
+                                    <div class="invalid-feedback d-block">
+                                        {{ form.mesaj.errors }}
+                                    </div>
+                                {% endif %}
+                                <div class="form-text">
+                                    Nu uitați să vă semnați la finalul mesajului cu numele dumneavoastră.
+                                </div>
+                            </div>
+                        </div>
+
+                        {% if form.non_field_errors %}
+                            <div class="alert alert-danger">
+                                {{ form.non_field_errors }}
+                            </div>
+                        {% endif %}
+
+                        <div class="d-grid gap-2">
+                            <button type="submit" class="btn btn-primary btn-lg">Trimite mesajul</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <!-- Informații de contact -->
+        <div class="col-md-4">
+            <div class="card shadow">
+                <div class="card-header bg-primary text-white">
+                    <h3 class="card-title mb-0">Informații contact</h3>
+                </div>
+                <div class="card-body">
+                    <div class="mb-4">
+                        <h5><i class="bi bi-geo-alt-fill"></i> Adresă</h5>
+                        <p>Strada Muzicii, Nr. 123<br>București, România</p>
+                    </div>
+                    <div class="mb-4">
+                        <h5><i class="bi bi-telephone-fill"></i> Telefon</h5>
+                        <p>+40 123 456 789</p>
+                    </div>
+                    <div class="mb-4">
+                        <h5><i class="bi bi-envelope-fill"></i> Email</h5>
+                        <p>contact@magazinmuzica.ro</p>
+                    </div>
+                    <div>
+                        <h5><i class="bi bi-clock-fill"></i> Program</h5>
+                        <p>Luni - Vineri: 9:00 - 18:00<br>
+                        Sâmbătă: 10:00 - 14:00<br>
+                        Duminică: Închis</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 </div>
 {% endblock %}

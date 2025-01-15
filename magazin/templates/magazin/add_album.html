@@ -1,14 +1,180 @@
-<!DOCTYPE html>
-<html>
-<head>
-    <title>Adaugă Album</title>
-</head>
-<body>
-    <h1>Adaugă Album</h1>
-    <form method="post" enctype="multipart/form-data">
-        {% csrf_token %}
-        {{ form.as_p }}
-        <button type="submit">Salvează</button>
-    </form>
-</body>
-</html>
+{% extends 'base.html' %}
+{% load form_tags %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            <div class="card shadow">
+                <div class="card-header bg-primary text-white">
+                    <h2 class="text-center mb-0">Adaugă Album Nou</h2>
+                </div>
+                <div class="card-body">
+                    {% if messages %}
+                        {% for message in messages %}
+                            <div class="alert alert-{{ message.tags }}">
+                                {{ message }}
+                            </div>
+                        {% endfor %}
+                    {% endif %}
+
+                    <form method="post" enctype="multipart/form-data" class="needs-validation" novalidate>
+                        {% csrf_token %}
+                        
+                        <div class="row">
+                            <!-- Titlu Album -->
+                            <div class="col-md-12 mb-3">
+                                <label for="{{ form.titlu.id_for_label }}" class="form-label">{{ form.titlu.label }}*</label>
+                                {{ form.titlu|addclass:"form-control" }}
+                                {% if form.titlu.help_text %}
+                                    <div class="form-text">{{ form.titlu.help_text }}</div>
+                                {% endif %}
+                                {% if form.titlu.errors %}
+                                    <div class="invalid-feedback d-block">
+                                        {{ form.titlu.errors }}
+                                    </div>
+                                {% endif %}
+                            </div>
+
+                            <!-- Artist și Gen -->
+                            <div class="col-md-6 mb-3">
+                                <label for="{{ form.artist.id_for_label }}" class="form-label">{{ form.artist.label }}*</label>
+                                {{ form.artist|addclass:"form-select" }}
+                                {% if form.artist.errors %}
+                                    <div class="invalid-feedback d-block">
+                                        {{ form.artist.errors }}
+                                    </div>
+                                {% endif %}
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label for="{{ form.gen.id_for_label }}" class="form-label">{{ form.gen.label }}*</label>
+                                {{ form.gen|addclass:"form-select" }}
+                                {% if form.gen.errors %}
+                                    <div class="invalid-feedback d-block">
+                                        {{ form.gen.errors }}
+                                    </div>
+                                {% endif %}
+                            </div>
+
+                            <!-- Preț și Data Lansării -->
+                            <div class="col-md-6 mb-3">
+                                <label for="{{ form.pret.id_for_label }}" class="form-label">{{ form.pret.label }}*</label>
+                                <div class="input-group">
+                                    {{ form.pret|addclass:"form-control" }}
+                                    <span class="input-group-text">RON</span>
+                                </div>
+                                {% if form.pret.errors %}
+                                    <div class="invalid-feedback d-block">
+                                        {{ form.pret.errors }}
+                                    </div>
+                                {% endif %}
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label for="{{ form.data_lansare.id_for_label }}" class="form-label">{{ form.data_lansare.label }}*</label>
+                                {{ form.data_lansare|addclass:"form-control" }}
+                                {% if form.data_lansare.errors %}
+                                    <div class="invalid-feedback d-block">
+                                        {{ form.data_lansare.errors }}
+                                    </div>
+                                {% endif %}
+                            </div>
+
+                            <!-- Imagine Album -->
+                            <div class="col-12 mb-3">
+                                <label for="{{ form.imagine.id_for_label }}" class="form-label">{{ form.imagine.label }}</label>
+                                <div class="input-group">
+                                    {{ form.imagine|addclass:"form-control" }}
+                                </div>
+                                <div class="mt-2">
+                                    <img id="imagePreview" src="#" alt="Preview imagine" style="max-width: 200px; display: none;" class="img-thumbnail">
+                                </div>
+                                {% if form.imagine.errors %}
+                                    <div class="invalid-feedback d-block">
+                                        {{ form.imagine.errors }}
+                                    </div>
+                                {% endif %}
+                            </div>
+
+                            <!-- Descriere -->
+                            <div class="col-12 mb-4">
+                                <label for="{{ form.descriere.id_for_label }}" class="form-label">{{ form.descriere.label }}</label>
+                                {{ form.descriere|addclass:"form-control" }}
+                                {% if form.descriere.errors %}
+                                    <div class="invalid-feedback d-block">
+                                        {{ form.descriere.errors }}
+                                    </div>
+                                {% endif %}
+                            </div>
+                        </div>
+
+                        {% if form.non_field_errors %}
+                            <div class="alert alert-danger">
+                                {{ form.non_field_errors }}
+                            </div>
+                        {% endif %}
+
+                        <div class="d-flex justify-content-between">
+                            <a href="{% url 'album_list' %}" class="btn btn-secondary">Anulează</a>
+                            <button type="submit" class="btn btn-primary">Salvează Album</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <!-- Card cu instrucțiuni -->
+        <div class="col-lg-4">
+            <div class="card shadow">
+                <div class="card-header bg-info text-white">
+                    <h4 class="card-title mb-0">Instrucțiuni</h4>
+                </div>
+                <div class="card-body">
+                    <ul class="list-unstyled">
+                        <li class="mb-3">
+                            <i class="bi bi-info-circle-fill text-info"></i>
+                            <strong>Titlu:</strong> Introduceți titlul complet al albumului.
+                        </li>
+                        <li class="mb-3">
+                            <i class="bi bi-info-circle-fill text-info"></i>
+                            <strong>Artist:</strong> Selectați artistul din lista existentă.
+                        </li>
+                        <li class="mb-3">
+                            <i class="bi bi-info-circle-fill text-info"></i>
+                            <strong>Gen:</strong> Puteți selecta mai multe genuri muzicale.
+                        </li>
+                        <li class="mb-3">
+                            <i class="bi bi-info-circle-fill text-info"></i>
+                            <strong>Preț:</strong> Introduceți prețul în RON (doar cifre).
+                        </li>
+                        <li class="mb-3">
+                            <i class="bi bi-info-circle-fill text-info"></i>
+                            <strong>Imagine:</strong> Încărcați o imagine reprezentativă pentru album.
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Script pentru preview imagine -->
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const imageInput = document.querySelector('input[type="file"]');
+    const imagePreview = document.getElementById('imagePreview');
+
+    imageInput.addEventListener('change', function() {
+        if (this.files && this.files[0]) {
+            const reader = new FileReader();
+            
+            reader.onload = function(e) {
+                imagePreview.src = e.target.result;
+                imagePreview.style.display = 'block';
+            }
+            
+            reader.readAsDataURL(this.files[0]);
+        }
+    });
+});
+</script>
+{% endblock %}

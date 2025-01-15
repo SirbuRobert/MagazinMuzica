@@ -111,26 +111,6 @@ class AlbumForm(forms.ModelForm):
         if pret <= 0:
             raise forms.ValidationError('Prețul trebuie să fie mai mare de 0')
         return pret
-
-    def clean(self):
-        cleaned_data = super().clean()
-        additional_field_1 = cleaned_data.get('additional_field_1')
-        additional_field_2 = cleaned_data.get('additional_field_2')
-
-        # Exemplu de validare care implică două câmpuri
-        if additional_field_1 and additional_field_2:
-            if additional_field_1 == additional_field_2:
-                raise forms.ValidationError('Câmpurile adiționale nu pot fi identice')
-
-        return cleaned_data
-
-    def save(self, commit=True):
-        album = super().save(commit=False)
-        # Procesare date din câmpurile adiționale
-        album.some_field = self.cleaned_data['additional_field_1'] + self.cleaned_data['additional_field_2']
-        if commit:
-            album.save()
-        return album
     
 class CustomUserCreationForm(UserCreationForm):
     username = forms.CharField(
