@@ -1,6 +1,6 @@
 from django.views.generic import ListView
 from django.db.models import Q, Subquery, OuterRef
-from .models import Album, Artist, Gen, Instrument, Stoc
+from .models import Album, Artist, Gen, Instrument, Stoc, CustomUser
 from django.views.generic import FormView
 from django.urls import reverse_lazy
 from django.utils import timezone
@@ -12,12 +12,37 @@ from .forms import ContactForm
 from django.shortcuts import render, redirect
 from .forms import AlbumForm
 from django.contrib.auth import login, logout, authenticate
-from django.shortcuts import render, redirect
 from .forms import CustomUserCreationForm, CustomAuthenticationForm
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.forms import PasswordChangeForm
 from django.contrib.auth import update_session_auth_hash
 from django.contrib import messages
+from django.http import HttpResponseForbidden
+from django.template.loader import render_to_string
+from django.contrib.auth.models import Permission
+from django.contrib.contenttypes.models import ContentType
+
+def oferta(request):
+    if not request.user.has_perm('magazin.vizualizeaza_oferta'):
+        context = {
+            'titlu': 'Eroare afisare oferta',
+            'mesaj_personalizat': 'Nu ai voie să vizualizezi oferta'
+        }
+        return HttpResponseForbidden(
+            render_to_string('magazin/403.html', context, request)
+        )
+    return render(request, 'magazin/oferta.html')
+
+def add_oferta_permission(request):
+    if request.user.is_authenticated:
+        content_type = ContentType.objects.get_for_model(CustomUser)
+        permission = Permission.objects.get(
+            codename='vizualizeaza_oferta',
+            content_type=content_type,
+        )
+        request.user.user_permissions.add(permission)
+        request.user.save()
+    return redirect('oferta')
 
 @login_required
 def change_password(request):
@@ -215,11 +240,20 @@ class AlbumListView(ListView):
         return context
 
 def add_album(request):
+    if not request.user.groups.filter(name='Administratori_produse').exists():
+        context = {
+            'titlu': 'Eroare adaugare produse',
+            'mesaj_personalizat': 'Nu ai voie să adaugi albume'
+        }
+        return HttpResponseForbidden(
+            render_to_string('magazin/403.html', context, request)
+        )
+        
     if request.method == 'POST':
         form = AlbumForm(request.POST, request.FILES)
         if form.is_valid():
             form.save()
-            return redirect('album_list')  # Redirecționează către lista de albume sau altă pagină
+            return redirect('album_list')
     else:
         form = AlbumForm()
     return render(request, 'magazin/add_album.html', {'form': form})

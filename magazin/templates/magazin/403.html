@@ -1,0 +1,37 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card">
+                <div class="card-body text-center">
+                    <h4 class="text-muted">
+                        {% if user.is_authenticated %}
+                            Salut {{ user.username }}
+                        {% else %}
+                            Salut preastimate anonim
+                        {% endif %}
+                    </h4>
+                    
+                    <h1 class="display-4 text-danger mb-4">
+                        {% if titlu %}
+                            {{ titlu }}
+                        {% else %}
+                            Eroare 403
+                        {% endif %}
+                    </h1>
+
+                    {% if mesaj_personalizat %}
+                        <p class="lead">{{ mesaj_personalizat }}</p>
+                    {% else %}
+                        <p class="lead">Nu aveți permisiunea de a accesa această resursă.</p>
+                    {% endif %}
+
+                    <a href="{% url 'album_list' %}" class="btn btn-primary mt-3">Înapoi la pagina principală</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

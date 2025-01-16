@@ -1,5 +1,19 @@
-from django.contrib.auth.models import AbstractUser
+from django.contrib.auth.models import AbstractUser, Permission
+from django.contrib.contenttypes.models import ContentType
 from django.db import models
+from django.contrib.auth.signals import user_logged_out
+from django.dispatch import receiver
+
+@receiver(user_logged_out)
+def remove_oferta_permission(sender, user, request, **kwargs):
+    if user.has_perm('magazin.vizualizeaza_oferta'):
+        content_type = ContentType.objects.get_for_model(CustomUser)
+        permission = Permission.objects.get(
+            codename='vizualizeaza_oferta',
+            content_type=content_type,
+        )
+        user.user_permissions.remove(permission)
+        user.save()
 
 class CustomUser(AbstractUser):
     phone_number = models.CharField(max_length=15, blank=True, null=True)
@@ -7,6 +21,11 @@ class CustomUser(AbstractUser):
     birth_date = models.DateField(blank=True, null=True)
     profile_picture = models.ImageField(upload_to='profile_pictures/', blank=True, null=True)
     bio = models.TextField(blank=True, null=True)
+    
+    class Meta:
+        permissions = [
+            ("vizualizeaza_oferta", "Poate vizualiza ofertele speciale"),
+        ]
 
     def __str__(self):
         return self.username

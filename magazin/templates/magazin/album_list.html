@@ -128,4 +128,23 @@
     </nav>
     {% endif %}
 </div>
+
+{% if user.is_authenticated %}
+<!-- Banner Ofertă -->
+<div id="ofertaBanner" style="display: none;" class="position-fixed bottom-0 start-50 translate-middle-x mb-4">
+    <div class="alert alert-success alert-dismissible fade show" role="alert">
+        <strong>Ofertă Specială!</strong> Reducere 50% la toate produsele!
+        <a href="{% url 'add_oferta_permission' %}" class="btn btn-sm btn-success ms-3">Vezi oferta</a>
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    if (Math.random() < 0.3) { // 30% șansă
+        document.getElementById('ofertaBanner').style.display = 'block';
+    }
+});
+</script>
+{% endif %}
 {% endblock %}

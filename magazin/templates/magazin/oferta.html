@@ -1,0 +1,21 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container mt-5">
+    <div class="card">
+        <div class="card-header bg-success text-white">
+            <h2 class="mb-0">Ofertă Specială - 50% Reducere!</h2>
+        </div>
+        <div class="card-body">
+            <h4>Felicitări! Ai acces la ofertele noastre speciale.</h4>
+            <p class="lead">Beneficiază acum de 50% reducere la toate produsele din magazin!</p>
+            <p>Această ofertă este valabilă doar pentru utilizatorii înregistrați care au accesat banner-ul special.</p>
+            
+            <div class="mt-4">
+                <a href="{% url 'album_list' %}" class="btn btn-primary">Vezi albumele</a>
+                <a href="{% url 'instrument_list' %}" class="btn btn-secondary">Vezi instrumentele</a>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
