@@ -25,6 +25,7 @@ from django.http import JsonResponse
 from django.views.decorators.http import require_http_methods
 from django.db.models import F
 import json
+import logging
 
 @require_http_methods(["POST"])
 def add_to_cart(request):
