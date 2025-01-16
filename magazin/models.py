@@ -117,6 +117,12 @@ class Stoc(models.Model):
     locatie_depozit = models.CharField(max_length=200)
     ultima_actualizare = models.DateTimeField(auto_now=True)
 
+    class Meta:
+        verbose_name_plural = "Stocuri"
+        indexes = [
+            models.Index(fields=['tip_produs', 'produs_id']),
+        ]
+
     def get_produs(self):
         if self.tip_produs == 'album':
             return Album.objects.get(id=self.produs_id)
@@ -125,8 +131,3 @@ class Stoc(models.Model):
         elif self.tip_produs == 'accesoriu':
             return Accesoriu.objects.get(id=self.produs_id)
         return None
-
-    def __str__(self):
-        produs = self.get_produs()
-        return f"{produs} - Stoc: {self.cantitate}"
-

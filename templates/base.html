@@ -1,87 +1,90 @@
+{% load static %}
 <!DOCTYPE html>
 <html lang="ro">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Magazin de Muzică</title>
-    <!-- Bootstrap CSS -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.7.2/font/bootstrap-icons.css" rel="stylesheet">
+   <meta charset="UTF-8">
+   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+   <title>Magazin de Muzică</title>
+   <!-- Bootstrap CSS -->
+   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+   <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.7.2/font/bootstrap-icons.css" rel="stylesheet">
+   <link href="{% static 'magazin/css/cart.css' %}" rel="stylesheet">
 </head>
 <body>
-    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
-        <div class="container">
-            <a class="navbar-brand" href="{% url 'album_list' %}">Magazin de Muzică</a>
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
-                <span class="navbar-toggler-icon"></span>
-            </button>
-            <div class="collapse navbar-collapse" id="navbarNav">
-                <ul class="navbar-nav me-auto">
-                    <li class="nav-item">
-                        <a class="nav-link" href="{% url 'album_list' %}">Albume</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="{% url 'instrument_list' %}">Instrumente</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="{% url 'contact' %}">Contact</a>
-                    </li>
-                    {% if user.is_authenticated %}
-                        <li class="nav-item">
-                            <a class="nav-link" href="{% url 'add_album' %}">Adaugă Album</a>
-                        </li>
-                    {% endif %}
-                </ul>
-                <ul class="navbar-nav">
-                    {% if user.is_authenticated %}
-                        <li class="nav-item">
-                            <a class="nav-link" href="{% url 'profile' %}">
-                                <i class="bi bi-person-fill"></i> Profil
-                            </a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" href="{% url 'logout' %}">
-                                <i class="bi bi-box-arrow-right"></i> Deconectare
-                            </a>
-                        </li>
-                    {% else %}
-                        <li class="nav-item">
-                            <a class="nav-link" href="{% url 'login' %}">
-                                <i class="bi bi-box-arrow-in-right"></i> Autentificare
-                            </a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" href="{% url 'register' %}">
-                                <i class="bi bi-person-plus"></i> Înregistrare
-                            </a>
-                        </li>
-                    {% endif %}
-                    <li class="nav-item">
-                        <a class="nav-link" href="#" id="cart-icon">
-                            <i class="bi bi-cart3"></i>
-                            <span class="badge bg-danger">0</span>
-                        </a>
-                    </li>
-                </ul>
-            </div>
-        </div>
-    </nav>
+   <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+       <div class="container">
+           <a class="navbar-brand" href="{% url 'album_list' %}">Magazin de Muzică</a>
+           <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+               <span class="navbar-toggler-icon"></span>
+           </button>
+           <div class="collapse navbar-collapse" id="navbarNav">
+               <ul class="navbar-nav me-auto">
+                   <li class="nav-item">
+                       <a class="nav-link" href="{% url 'album_list' %}">Albume</a>
+                   </li>
+                   <li class="nav-item">
+                       <a class="nav-link" href="{% url 'instrument_list' %}">Instrumente</a>
+                   </li>
+                   <li class="nav-item">
+                       <a class="nav-link" href="{% url 'contact' %}">Contact</a>
+                   </li>
+                   {% if user.is_authenticated %}
+                       <li class="nav-item">
+                           <a class="nav-link" href="{% url 'add_album' %}">Adaugă Album</a>
+                       </li>
+                   {% endif %}
+               </ul>
+               <ul class="navbar-nav">
+                   {% if user.is_authenticated %}
+                       <li class="nav-item">
+                           <a class="nav-link" href="{% url 'profile' %}">
+                               <i class="bi bi-person-fill"></i> Profil
+                           </a>
+                       </li>
+                       <li class="nav-item">
+                           <a class="nav-link" href="{% url 'logout' %}">
+                               <i class="bi bi-box-arrow-right"></i> Deconectare
+                           </a>
+                       </li>
+                   {% else %}
+                       <li class="nav-item">
+                           <a class="nav-link" href="{% url 'login' %}">
+                               <i class="bi bi-box-arrow-in-right"></i> Autentificare
+                           </a>
+                       </li>
+                       <li class="nav-item">
+                           <a class="nav-link" href="{% url 'register' %}">
+                               <i class="bi bi-person-plus"></i> Înregistrare
+                           </a>
+                       </li>
+                   {% endif %}
+                   <li class="nav-item">
+                       <a class="nav-link" href="{% url 'cart' %}" id="cart-icon">
+                           <i class="bi bi-cart3"></i>
+                           <span class="badge bg-danger">0</span>
+                       </a>
+                   </li>
+               </ul>
+           </div>
+       </div>
+   </nav>
 
-    <div class="container mt-4">
-        {% if messages %}
-            {% for message in messages %}
-                <div class="alert alert-{{ message.tags }} alert-dismissible fade show">
-                    {{ message }}
-                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-                </div>
-            {% endfor %}
-        {% endif %}
-        
-        {% block content %}
-        {% endblock %}
-    </div>
+   <div class="container mt-4">
+       {% if messages %}
+           {% for message in messages %}
+               <div class="alert alert-{{ message.tags }} alert-dismissible fade show">
+                   {{ message }}
+                   <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+               </div>
+           {% endfor %}
+       {% endif %}
+       
+       {% block content %}
+       {% endblock %}
+   </div>
 
-    <!-- Bootstrap JS și dependințe -->
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+   <!-- Bootstrap JS și dependințe -->
+   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+   <script src="{% static 'magazin/js/cart.js' %}"></script>
 </body>
 </html>

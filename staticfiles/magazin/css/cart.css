@@ -1,0 +1,24 @@
+/* magazin/static/magazin/css/cart.css */
+
+.cart-quantity-input {
+    width: 60px;
+    text-align: center;
+}
+
+.cart-controls {
+    max-width: 150px;
+}
+
+.product-in-cart {
+    position: relative;
+}
+
+.product-in-cart::after {
+    content: '✓';
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    color: #28a745;
+    font-size: 20px;
+    font-weight: bold;
+}

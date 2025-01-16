@@ -1,0 +1,31 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<div class="container mt-4">
+    <h2>Coșul meu</h2>
+    
+    <div id="cart-items" class="row">
+        <!-- Produsele vor fi afișate aici prin JavaScript -->
+    </div>
+
+    <div class="card mt-4">
+        <div class="card-body">
+            <h5 class="card-title">Sumar comandă</h5>
+            <div class="d-flex justify-content-between mb-2">
+                <span>Total produse:</span>
+                <span id="total-items">0</span>
+            </div>
+            <div class="d-flex justify-content-between">
+                <span>Total de plată:</span>
+                <span id="total-price">0 RON</span>
+            </div>
+        </div>
+    </div>
+
+    <div class="mt-3">
+        <button class="btn btn-primary me-2" onclick="cartManager.sortByName()">Sortează după nume</button>
+        <button class="btn btn-primary" onclick="cartManager.sortByPrice()">Sortează după preț</button>
+    </div>
+</div>
+{% endblock %}

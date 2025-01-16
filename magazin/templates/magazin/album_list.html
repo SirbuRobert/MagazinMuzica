@@ -89,9 +89,26 @@
                 </div>
                 <div class="card-footer">
                     {% if album.stoc_cantitate > 0 %}
-                        <button class="btn btn-success w-100">Adaugă în coș</button>
+                        <div class="d-flex justify-content-between align-items-center">
+                            <div class="input-group input-group-sm cart-controls">
+                                <button class="btn btn-outline-secondary" type="button" 
+                                        onclick="document.getElementById('quantity-{{ album.id }}').value = Math.max(1, parseInt(document.getElementById('quantity-{{ album.id }}').value) - 1)">-</button>
+                                <input type="number" class="form-control text-center cart-quantity-input" 
+                                       value="1" min="1" max="{{ album.stoc_cantitate }}"
+                                       id="quantity-{{ album.id }}">
+                                <button class="btn btn-outline-secondary" type="button" 
+                                        onclick="document.getElementById('quantity-{{ album.id }}').value = Math.min({{ album.stoc_cantitate }}, parseInt(document.getElementById('quantity-{{ album.id }}').value) + 1)">+</button>
+                            </div>
+                            <button class="btn btn-success" onclick="cartManager.addToCart(
+                                '{{ album.id }}', 
+                                'album', 
+                                parseInt(document.getElementById('quantity-{{ album.id }}').value)
+                            )">
+                                Adaugă în coș
+                            </button>
+                        </div>
                     {% else %}
-                        <button class="btn btn-secondary w-100" disabled>Indisponibil</button>
+                        <button class="btn btn-secondary w-100" disabled>Stoc epuizat</button>
                     {% endif %}
                 </div>
             </div>

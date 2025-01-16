@@ -21,6 +21,84 @@ from django.http import HttpResponseForbidden
 from django.template.loader import render_to_string
 from django.contrib.auth.models import Permission
 from django.contrib.contenttypes.models import ContentType
+from django.http import JsonResponse
+from django.views.decorators.http import require_http_methods
+from django.db.models import F
+import json
+
+@require_http_methods(["POST"])
+def add_to_cart(request):
+    data = json.loads(request.body)
+    product_id = data.get('product_id')
+    product_type = data.get('product_type')
+    quantity = data.get('quantity', 1)
+
+    try:
+        if product_type == 'album':
+            product = Album.objects.get(id=product_id)
+        elif product_type == 'instrument':
+            product = Instrument.objects.get(id=product_id)
+        else:
+            return JsonResponse({
+                'success': False,
+                'message': 'Tip de produs invalid'
+            })
+
+        stoc = Stoc.objects.get(
+            produs_id=product_id,
+            tip_produs=product_type
+        )
+
+        if stoc.cantitate >= quantity:
+            return JsonResponse({
+                'success': True,
+                'product_name': product.titlu if hasattr(product, 'titlu') else product.nume,
+                'product_price': float(product.pret),
+                'stock_count': stoc.cantitate
+            })
+        else:
+            return JsonResponse({
+                'success': False,
+                'message': 'Stoc insuficient'
+            })
+    except (Album.DoesNotExist, Instrument.DoesNotExist, Stoc.DoesNotExist):
+        return JsonResponse({
+            'success': False,
+            'message': 'Produsul nu există'
+        })
+
+@require_http_methods(["GET"])
+def cart_view(request):
+    return render(request, 'magazin/cart.html')
+
+@require_http_methods(["POST"])
+def remove_from_cart(request):
+    data = json.loads(request.body)
+    return JsonResponse({'success': True})
+
+@require_http_methods(["POST"])
+def update_cart_quantity(request):
+    data = json.loads(request.body)
+    product_id = data.get('product_id')
+    product_type = data.get('product_type')
+    quantity = data.get('quantity', 1)
+
+    stoc = Stoc.objects.filter(
+        produs_id=product_id, 
+        tip_produs=product_type
+    ).first()
+
+    if not stoc or stoc.cantitate < quantity:
+        return JsonResponse({
+            'success': False,
+            'message': 'Cantitate solicitată indisponibilă',
+            'available_quantity': stoc.cantitate if stoc else 0
+        }, status=400)
+
+    return JsonResponse({
+        'success': True,
+        'stock_count': stoc.cantitate
+    })
 
 def oferta(request):
     if not request.user.has_perm('magazin.vizualizeaza_oferta'):
